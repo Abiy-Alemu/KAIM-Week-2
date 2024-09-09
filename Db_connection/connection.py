@@ -39,19 +39,35 @@ class Postgres_Connection:
             self.conn.close()
             print("Connection closed.")
 
+    def fetch_to_dataframe(self, query):
+        # Fetch data and return as a Pandas DataFrame
+        try:
+            rows = self.execute_query(query)
+            if rows:
+                df = pd.DataFrame(rows, columns=[desc[0] for desc in self.cursor.description])
+                return df
+            else:
+                return None
+        except Exception as e:
+            print(f"Error fetching data: {e}")
+            return None
 
-# Updated database credentials and table name
+
+# Instantiate the database connection class
 db = Postgres_Connection(dbname='my_database', user='postgres', password='123', host='localhost', port='5432')
 db.connect()
 
-# Query from your specific table
+# Query to fetch data from the table
 query = "SELECT * FROM public.xdr_data"
-result = db.execute_query(query)
+df = db.fetch_to_dataframe(query)
 
-# Convert the result to a Pandas DataFrame if rows were fetched
-if result:
-    df = pd.DataFrame(result, columns=[desc[0] for desc in db.cursor.description])
-    print(df.head())  # Display the first few rows of the DataFrame
+# Check the result and display the first few rows
+if df is not None:
+    print(df.head())
 
-# Close the connection when done
+    # Data cleaning and processing can start here
+    df.dropna(inplace=True)  # Example of dropping missing values
+    df.fillna(0, inplace=True)  # Imputation example
+    # You can add more processing based on Task 1.1 and Task 1.2 needs
+
 db.close_connection()
