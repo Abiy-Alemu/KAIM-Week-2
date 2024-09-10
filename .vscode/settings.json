@@ -11,5 +11,8 @@
             "password": "123",
             "connectionTimeout": 30
         }
+    ],
+    "python.analysis.extraPaths": [
+        "./src/db_"
     ]
 }
